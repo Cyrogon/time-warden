@@ -7,9 +7,10 @@ using System.Web;
 
 namespace time_warden.Models
 {
-    public class User:IdentityUser
+    public class User
     {
-        // Extending IdentityUser with these properties
+        public string UserId { get; set; }
+        
         [Display(Name = "First Name")]
         [Required]
         public string FirstName { get; set; }

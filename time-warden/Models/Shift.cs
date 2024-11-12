@@ -28,5 +28,31 @@ namespace time_warden.Models
 
         public string UserId { get; set; }
         public User User { get; set; }
+        public readonly DBWriter DbWriter = new DBWriter();
+
+        public Shift()
+        {
+            
+        }
+
+        public Shift ClockIn(User user)
+        {
+            Shift shift = new Shift();
+            shift.UserId = user.UserId;
+            shift.ClockInTime = DateTime.Now;
+
+            DbWriter.StartShift(shift);
+
+            return shift;
+        }
+
+        public Shift ClockOut(Shift shift)
+        {
+            shift.ClockOutTime = DateTime.Now;
+            shift.HoursWorked = ClockOutTime - ClockInTime;
+            
+            DbWriter.EndShift(shift);
+            return shift;
+        }
     }
 }
