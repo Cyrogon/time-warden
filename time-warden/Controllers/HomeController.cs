@@ -11,6 +11,16 @@ namespace time_warden.Controllers
     {
         public ActionResult Index()
         {
+            List<User> users = new List<User>();
+            DBReader db = new DBReader();
+
+            users = db.GetEmployees();
+
+            for (int i = 0; i < users.Count; i++)
+            {
+                Console.WriteLine("Name: " +users[i].FirstName + " " + users[i].Surname);
+            }
+            
             
             return View();
         }
