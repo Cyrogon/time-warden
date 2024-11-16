@@ -7,6 +7,7 @@ using time_warden.Models;
 
 namespace time_warden.Controllers
 {
+    [Authorize] //Authorize ensures user has to be logged in to reach these pages
     public class HomeController : Controller
     {
         public ActionResult Index()
