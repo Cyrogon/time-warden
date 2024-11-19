@@ -84,5 +84,93 @@ namespace time_warden.Models
 
             return null; //No active shift found
         }
+        
+        
+        //returns a list of shifts belonging to the logged-in user
+        public List<Shift> GetEmployeeShifts(User user)
+        {
+            List<Shift> shifts = new List<Shift>();
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "SELECT * FROM employee_timesheet WHERE employee_id = @UserId;";
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@UserId", user.UserId);
+                        using (MySqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Console.WriteLine("Reading...");
+                                
+                                Shift shift = new Shift()
+                                {
+                                    UserId = user.UserId,
+                                    ShiftId = int.Parse(reader["timesheet_id"].ToString()),
+                                    ShiftDate = DateTime.Parse(reader["date"].ToString()),
+                                    ClockInTime= DateTime.Parse(reader["shift_start"].ToString()),
+                                    ClockOutTime = DateTime.Parse(reader["shift_end"].ToString()),
+                                    HoursWorked = decimal.Parse(reader["hours_worked"].ToString()),
+                                };
+
+                                // Add the newly created shift to the list
+                                shifts.Add(shift);
+                                
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error: " + ex.Message);
+                }
+            }
+            return shifts;
+        }
+        
+        public List<Shift> GetShifts()
+        {
+            List<Shift> shifts = new List<Shift>();
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "SELECT * FROM employee_timesheet;";
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                    {
+                        using (MySqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Console.WriteLine("Reading...");
+                                
+                                Shift shift = new Shift()
+                                {
+                                    UserId = reader["employee_id"].ToString(),
+                                    ShiftId = int.Parse(reader["timesheet_id"].ToString()),
+                                    ShiftDate = DateTime.Parse(reader["date"].ToString()),
+                                    ClockInTime= DateTime.Parse(reader["shift_start"].ToString()),
+                                    ClockOutTime = DateTime.Parse(reader["shift_end"].ToString()),
+                                    HoursWorked = decimal.Parse(reader["hours_worked"].ToString()),
+                                };
+
+                                // Add the newly created shift to the list
+                                shifts.Add(shift);
+                                
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error: " + ex.Message);
+                }
+            }
+            return shifts;
+        }
+        
     }
 }
