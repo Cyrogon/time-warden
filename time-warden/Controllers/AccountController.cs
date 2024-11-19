@@ -52,45 +52,105 @@ namespace time_warden.Controllers
             }
         }
 
-        //
-        // GET: /Account/Login
+        //-----------------------------------------------------------------------------------------------------------------
+        // // GET: /Account/Login
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
-
+        
         //
-        // POST: /Account/Login
+        // POST: /Account/Login (new simple login logic)
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        public ActionResult Login(LoginViewModel model, string returnUrl)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View(model);
+                //Get users from the database using DBReader
+                DBReader dbReader = new DBReader();
+                var employees = dbReader.GetEmployees();
+        
+                //Check if the entered username and password combo matches any in the database
+                var user = employees.FirstOrDefault(u => 
+                    u.Username.Equals(model.Username, StringComparison.OrdinalIgnoreCase) && 
+                    u.Password == model.Password);
+        
+                if (user != null) //If matching credentials were found, log the user in and go to home page
+                {
+                    //Sign the user in with asp.net Identity
+                    var identity = new ClaimsIdentity(DefaultAuthenticationTypes.ApplicationCookie);
+                    identity.AddClaim(new Claim(ClaimTypes.Name, user.Username));
+                    AuthenticationManager.SignIn(new AuthenticationProperties { IsPersistent = false }, identity);
+                    
+                    //Store the user in Session
+                    Session["LoggedInUser"] = user;
+                    
+                    //Login successful, redirect to the home page
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    //Invalid credentials, show error
+                    ModelState.AddModelError("", "Invalid username or password. Please try again.");
+                }
             }
-
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-            switch (result)
-            {
-                case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                case SignInStatus.Failure:
-                default:
-                    ModelState.AddModelError("", "Invalid login attempt.");
-                    return View(model);
-            }
+        
+            // If we got this far, something failed, redisplay form
+            return View(model);
         }
+        
+        
+        // POST: /Account/Login
+        // [HttpPost]
+        // [AllowAnonymous]
+        // [ValidateAntiForgeryToken]
+        // public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        // {
+        //     if (!ModelState.IsValid)
+        //     {
+        //         return View(model);
+        //     }
+        //
+        //     // This doesn't count login failures towards account lockout
+        //     // To enable password failures to trigger account lockout, change to shouldLockout: true
+        //     var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+        //     switch (result)
+        //     {
+        //         case SignInStatus.Success:
+        //             return RedirectToLocal(returnUrl);
+        //         case SignInStatus.LockedOut:
+        //             return View("Lockout");
+        //         case SignInStatus.RequiresVerification:
+        //             return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+        //         case SignInStatus.Failure:
+        //         default:
+        //             ModelState.AddModelError("", "Invalid login attempt.");
+        //             return View(model);
+        //     }
+        // }
 
+        public ActionResult Logout()
+        {
+            //Remove the LoggedInUser from the session
+            Session.Remove("LoggedInUser");
+            
+            //Clear/abandon the session
+            Session.Clear();
+            Session.Abandon();
+            
+            //Clear the authentication cookie using the ASP.NET Identity system
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            
+            //Redirect to the login page or home page
+            return RedirectToAction("Login", "Account");
+        }
+        //------------------------------------------------------------------------------------------------------------------------------
+        
+        
         //
         // GET: /Account/VerifyCode
         [AllowAnonymous]
