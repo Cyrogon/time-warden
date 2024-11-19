@@ -19,7 +19,8 @@ namespace time_warden.Models
                 try
                 {
                     conn.Open();
-                    string query = "INSERT INTO employee_timesheet (employee_id, date, shift_start) VALUES (shift.UserId, CURRENT_DATE, shift.ClockInTime)";
+                    string query = "INSERT INTO employee_timesheet (employee_id, date, shift_start, shift_end) VALUES (@UserId, CURRENT_DATE, @ClockInTime, '0000-00-00 00:00:00')";
+                                                                                            //changed from (shift.UserId, CURRENT_DATE, shift.ClockInTime)
                     using (MySqlCommand cmd = new MySqlCommand(query, conn))
                     {
                         //parameterised methods for safety

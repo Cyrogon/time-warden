@@ -31,6 +31,7 @@ namespace time_warden.Models
                                 
                                 User employee = new User
                                 {
+                                    UserId = reader["employee_id"].ToString(),
                                     FirstName = reader["first_name"].ToString(),
                                     Surname = reader["last_name"].ToString(),
                                     Role = reader["role"].ToString(),
@@ -51,6 +52,37 @@ namespace time_warden.Models
                 }
             }
             return employees;
+        }
+        
+        //--------------------------------------------------------------------------------------
+        // Method to get the current active shift for a user
+        public Shift GetCurrentShift(string userId)
+        {
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+                string query = "SELECT * FROM employee_timesheet WHERE employee_id = @UserId AND hours_worked IS NULL"; //Looks for the shift with that UserId where hours worked is null
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            //If a shift exists, return it
+                            return new Shift
+                            {
+                                ShiftId = int.Parse(reader["timesheet_id"].ToString()),
+                                ClockInTime = DateTime.Parse(reader["shift_start"].ToString()),
+                                ClockOutTime = reader["shift_end"] != DBNull.Value ? DateTime.Parse(reader["shift_end"].ToString()) : DateTime.MinValue, //Handle null ClockOutTime
+                                HoursWorked = reader["hours_worked"] != DBNull.Value ? decimal.Parse(reader["hours_worked"].ToString()) : 0m
+                            };
+                        }
+                    }
+                }
+            }
+
+            return null; //No active shift found
         }
     }
 }

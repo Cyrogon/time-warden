@@ -17,7 +17,7 @@ namespace time_warden.Models
         public DateTime ClockOutTime { get; set; }
 
         [Display(Name = "Hours Worked")]
-        public TimeSpan HoursWorked { get; set; }
+        public decimal HoursWorked { get; set; } //changed to decimal from timespan
 
         [Display(Name = "Shift Worked?")]
         public bool IsWorked { get; set; }
@@ -38,10 +38,18 @@ namespace time_warden.Models
         public Shift ClockIn(User user)
         {
             Shift shift = new Shift();
-            shift.UserId = user.UserId;
-            shift.ClockInTime = DateTime.Now;
-
-            DbWriter.StartShift(shift);
+            if (user != null)
+            {
+                shift.UserId = user.UserId; //Set the user ID properly
+                shift.ClockInTime = DateTime.Now;
+        
+                // Call the DB method to start the shift
+                DbWriter.StartShift(shift);
+            }
+            else
+            {
+                Console.WriteLine("Error: User object is null.");
+            }
 
             return shift;
         }
@@ -49,10 +57,21 @@ namespace time_warden.Models
         public Shift ClockOut(Shift shift)
         {
             shift.ClockOutTime = DateTime.Now;
-            shift.HoursWorked = ClockOutTime - ClockInTime;
-            
+
+            // Convert TimeSpan to decimal hours
+            shift.HoursWorked = (decimal)(shift.ClockOutTime - shift.ClockInTime).TotalHours;
+
             DbWriter.EndShift(shift);
             return shift;
         }
+
+        //public Shift ClockOut(Shift shift)
+        //{
+        //    shift.ClockOutTime = DateTime.Now;
+        //    shift.HoursWorked = ClockOutTime - ClockInTime;
+            
+        //    DbWriter.EndShift(shift);
+        //    return shift;
+        //}
     }
 }
