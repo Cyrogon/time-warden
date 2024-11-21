@@ -1,0 +1,30 @@
+﻿@model IEnumerable<time_warden.Models.Shift>
+
+@{
+    ViewBag.Title = "My Shifts";
+}
+
+<h2>My Shifts</h2>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Shift Date</th>
+        <th>Clock In Time</th>
+        <th>Clock Out Time</th>
+        <th>Hours Worked</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var shift in Model)
+    {
+        <tr>
+            <td>@shift.ShiftDate.ToString("yyyy-MM-dd")</td>
+            <td>@shift.ClockInTime.ToString("HH:mm:ss")</td>
+            <td>@shift.ClockOutTime.ToString("HH:mm:ss")</td>
+            <td>@shift.HoursWorked</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
