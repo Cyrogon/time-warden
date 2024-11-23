@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Org.BouncyCastle.Asn1.X509;
+using time_warden.Models;
 
 namespace time_warden.Controllers
 {
@@ -23,6 +25,34 @@ namespace time_warden.Controllers
         // GET: Payslip/Create
         public ActionResult Create()
         {
+            var loggedInUser = (User)Session["LoggedInUser"];
+            DBReader reader = new DBReader();
+            
+            List<Shift> shifts = reader.GetShiftsForSlip(loggedInUser);
+
+            decimal totalHours = 0;
+            
+        //tally up all hours worked this calendar month
+        //once db is updated it will exclude shifts which were not worked but include upcoming shifts
+        //in order to provide an idea of the final amount
+            foreach (Shift shift in shifts)
+            {
+                totalHours += shift.HoursWorked;
+            }
+            
+            Payslip payslip = new Payslip();
+            payslip.Shifts = shifts;
+            payslip.TotalHoursWorked = totalHours;
+            payslip.UserId = loggedInUser.UserId;
+            
+            //until db is updated, this will be fixed rate of pay
+            payslip.TotalPay = totalHours*11;
+            
+            //can remove this when doing frontend, this is for testing
+            
+            Console.WriteLine(payslip.TotalHoursWorked);
+            Console.WriteLine(payslip.TotalPay);
+            
             return View();
         }
 
