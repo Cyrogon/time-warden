@@ -8,6 +8,7 @@ using time_warden.Models;
 
 namespace time_warden.Controllers
 {
+    [Authorize]
     public class PayslipController : Controller
     {
         // GET: Payslip
@@ -44,6 +45,7 @@ namespace time_warden.Controllers
             payslip.Shifts = shifts;
             payslip.TotalHoursWorked = totalHours;
             payslip.UserId = loggedInUser.UserId;
+            payslip.User = loggedInUser; //Assign loggedInUser to the payslip for display purposes in the view
             
             //until db is updated, this will be fixed rate of pay
             payslip.TotalPay = totalHours*11;
@@ -53,7 +55,7 @@ namespace time_warden.Controllers
             Console.WriteLine(payslip.TotalHoursWorked);
             Console.WriteLine(payslip.TotalPay);
             
-            return View();
+            return View(payslip);
         }
 
         // POST: Payslip/Create

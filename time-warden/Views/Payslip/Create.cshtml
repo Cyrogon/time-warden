@@ -1,0 +1,40 @@
+﻿@model time_warden.Models.Payslip
+
+@{
+    ViewBag.Title = "Payslip Details";
+}
+
+<h2>Payslip</h2>
+<p>This payslip reflects the hours worked for the previous 30 days from today's date.</p>
+
+<p><strong>Disclaimer:</strong> This amount is an estimate and could change due to factors such as sickness or changes in working hours.</p>
+
+<h3 style="margin-top: 40px;">Employee: @Model.User.FirstName @Model.User.Surname (ID @Model.UserId)</h3>
+<h4>Total Hours Worked: @Model.TotalHoursWorked</h4>
+<h4>Total Pay: £@Model.TotalPay</h4>
+
+<h3 style="margin-top: 30px;">Shifts:</h3>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Shift ID</th>
+        <th>Shift Date</th>
+        <th>Clock In</th>
+        <th>Clock Out</th>
+        <th>Hours Worked</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var shift in Model.Shifts)
+    {
+    <tr>
+        <td>@shift.ShiftId</td>
+        <td>@shift.ShiftDate.ToString("yyyy-MM-dd")</td>
+        <td>@shift.ClockInTime.ToString("HH:mm:ss")</td>
+        <td>@shift.ClockOutTime.ToString("HH:mm:ss")</td>
+        <td>@shift.HoursWorked</td>
+    </tr>
+    }
+    </tbody>
+</table>
