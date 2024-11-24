@@ -25,7 +25,6 @@ namespace time_warden.Models
         public DateTime ShiftDate {  get; set; }
 
         //Navigational Properties - These are properties which are related to other classes and the basis of their relationships
-
         public string UserId { get; set; }
         public User User { get; set; }
         public readonly DBWriter DbWriter = new DBWriter();

@@ -21,8 +21,18 @@
             <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
                     <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("My Shifts", "Index", "Shift", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+
+                    @* Show 'Manage Shifts' in nav bar for manager users *@
+                    @if (Session["LoggedInUser"] != null)
+                    {
+                    var loggedInUser = (User)Session["LoggedInUser"];
+                    if (loggedInUser.Role == "Manager")
+                    {
+                    <li>@Html.ActionLink("Manage Shifts", "ManageShifts", "Shift", new { area = "" }, new { @class = "nav-link text-warning" })</li>
+                    }
+                    }
                 </ul>
                 
                 @*Checks if user is logged in to display customised welcome message in nav bar, also changes 'log in' button to 'log out'*@
