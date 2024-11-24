@@ -9,7 +9,7 @@ namespace time_warden.Models
     {
         public int PayslipId { get; set; }
         
-        public TimeSpan TotalHoursWorked { get; set; }
+        public decimal TotalHoursWorked { get; set; }
 
         public decimal TotalPay {  get; set; }
 

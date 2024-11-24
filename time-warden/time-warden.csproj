@@ -287,6 +287,13 @@
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Views\Shift\Index.cshtml" />
     <Content Include="Views\Shift\ManageShifts.cshtml" />
+    <Content Include="Views\Payslip\Create.cshtml" />
+<<<<<<< HEAD
+    <Content Include="Views\Shift\Index.cshtml" />
+    <Content Include="Views\Shift\ManageShifts.cshtml" />
+=======
+    <Content Include="Views\Payslip\Create.cshtml" />
+>>>>>>> origin/V1.5
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -324,7 +331,13 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+<<<<<<< HEAD
     <Folder Include="Views\Payslip\" />
+=======
+    <Folder Include="Views\Shift\" />
+>>>>>>> origin/V1.5
+    <Folder Include="Views\Payslip\" />
+    <Folder Include="Views\Shift\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
