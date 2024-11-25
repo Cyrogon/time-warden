@@ -29,7 +29,10 @@ jobs:
 
       - name: Move to main Dir
         run: cd time-warden
-        
+
+      - name: Dir
+        run: dir
+
       - name: Restore Nuget Packages
         run: nuget restore time-warden.sln
     
