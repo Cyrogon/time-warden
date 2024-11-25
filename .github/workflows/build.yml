@@ -26,7 +26,7 @@ jobs:
         uses: microsoft/setup-msbuild@v1
   
       - name: Setup Nuget.exe for use with actions
-        uses: Nuget/Setup-nuget@v1.0.2
+        uses: Nuget/Setup-nuget@v2
         
       - name: Restore Nuget Packages
         run: nuget restore solution.sln
