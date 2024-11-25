@@ -31,7 +31,7 @@ jobs:
         run: |
           cd time-warden
           nuget restore time-warden.sln
-          msbuild time-warden.sln /t:Publish /p:OutputPath=_build /p:Configuration=Release /p:PublishProfile=Publish-Warden
+          msbuild time-warden.sln /t:Publish /p:OutputPath=_build /p:Configuration=Publish
       
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
