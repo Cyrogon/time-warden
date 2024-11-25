@@ -30,6 +30,9 @@ jobs:
       - name: Move to main Dir
         run: cd time-warden
 
+      - name: Move again
+        run: cd time-warden
+
       - name: Dir
         run: dir
 
