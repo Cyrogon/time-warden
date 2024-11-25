@@ -37,4 +37,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Bundle
-          path: "./_build"
+          path: "./time-warden/_build"
