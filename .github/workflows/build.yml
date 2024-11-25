@@ -31,7 +31,7 @@ jobs:
         run: cd time-warden
 
       - name: Move again
-        run: cd time-warden
+        run: cd time-warden & dir
 
       - name: Dir
         run: dir
