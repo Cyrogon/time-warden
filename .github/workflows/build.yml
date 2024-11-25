@@ -29,10 +29,10 @@ jobs:
         uses: Nuget/Setup-nuget@v2
         
       - name: Restore Nuget Packages
-        run: nuget restore "/time-warden/time-warden.sln"
+        run: nuget restore \time-warden\time-warden.sln
     
       - name: Build Solution
-        run: msbuild "/time-warden/time-warden.sln"
+        run: msbuild \time-warden\time-warden.sln"
       
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
