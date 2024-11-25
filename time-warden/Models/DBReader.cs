@@ -55,13 +55,13 @@ namespace time_warden.Models
         }
         
         //--------------------------------------------------------------------------------------
-        // Method to get the current active shift for a user
-        public Shift GetCurrentShift(string userId)
+        //Returns the shift scheduled for the employee with active status
+        public Shift GetActiveShift(string userId)
         {
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
                 conn.Open();
-                string query = "SELECT * FROM employee_timesheet WHERE employee_id = @UserId AND hours_worked IS NULL"; //Looks for the shift with that UserId where hours worked is null
+                string query = "SELECT * FROM employee_timesheet WHERE employee_id = @UserId AND status = 'Active'"; //Looks for the shift with that UserId and Active status
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@UserId", userId);
@@ -84,8 +84,38 @@ namespace time_warden.Models
 
             return null; //No active shift found
         }
-        
-        
+
+        //Returns the shift scheduled for the employee for todays date
+        public Shift GetTodaysShift(string userId) 
+        {
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+                string query = "SELECT * FROM employee_timesheet WHERE employee_id = @UserId AND DATE(date) = CURDATE()"; //Looks for the shift with that UserId where hours worked is null
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            //If a shift exists, return it
+                            return new Shift
+                            {
+                                ShiftId = int.Parse(reader["timesheet_id"].ToString()),
+                                ClockInTime = DateTime.Parse(reader["shift_start"].ToString()),
+                                ClockOutTime = reader["shift_end"] != DBNull.Value ? DateTime.Parse(reader["shift_end"].ToString()) : DateTime.MinValue, //Handle null ClockOutTime
+                                HoursWorked = reader["hours_worked"] != DBNull.Value ? decimal.Parse(reader["hours_worked"].ToString()) : 0m,
+                                Status = reader["status"].ToString(),
+                            };
+                        }
+                    }
+                }
+            }
+
+            return null; //No active shift found
+        }
+
         //returns a list of shifts belonging to the logged-in user
         public List<Shift> GetEmployeeShifts(User user)
         {
@@ -113,6 +143,7 @@ namespace time_warden.Models
                                     ClockInTime= DateTime.Parse(reader["shift_start"].ToString()),
                                     ClockOutTime = DateTime.Parse(reader["shift_end"].ToString()),
                                     HoursWorked = decimal.Parse(reader["hours_worked"].ToString()),
+                                    Status = reader["status"].ToString(),
                                 };
 
                                 // Add the newly created shift to the list
@@ -155,6 +186,7 @@ namespace time_warden.Models
                                     ClockInTime= DateTime.Parse(reader["shift_start"].ToString()),
                                     ClockOutTime = DateTime.Parse(reader["shift_end"].ToString()),
                                     HoursWorked = decimal.Parse(reader["hours_worked"].ToString()),
+                                    Status = reader["status"].ToString(),
                                 };
 
                                 // Add the newly created shift to the list

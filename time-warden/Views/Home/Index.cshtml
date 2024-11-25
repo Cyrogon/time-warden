@@ -2,22 +2,6 @@
     ViewBag.Title = "Home Page";
 }
 
-@* <main> *@
-@*     <section class="row" aria-labelledby="aspnetTitle"> *@
-@*         <h1 id="title">Time Warden</h1> *@
-@* *@
-@*         <!-- Simple Clock In Button --> *@
-@*         <form action="@Url.Action("ClockIn", "Home")" method="post"> *@
-@*             <button type="submit" class="btn btn-primary">Clock In</button> *@
-@*         </form> *@
-@* *@
-@*         <!-- Simple Clock Out Button --> *@
-@*         <form action="@Url.Action("ClockOut", "Home")" method="post"> *@
-@*             <button type="submit" class="btn btn-secondary">Clock Out</button> *@
-@*         </form> *@
-@*     </section> *@
-@* </main> *@
-
 <main>
     <section class="row" aria-labelledby="aspnetTitle">
         <h1 id="title">Time Warden</h1>
@@ -25,31 +9,43 @@
         <!-- Display Success Message -->
         @if (TempData["SuccessMessage"] != null)
         {
-            <div class="alert alert-success">
-                @TempData["SuccessMessage"]
-            </div>
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
         }
 
         <!-- Display Error Message -->
         @if (TempData["ErrorMessage"] != null)
         {
-            <div class="alert alert-danger">
-                @TempData["ErrorMessage"]
-            </div>
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
         }
-        
+
+        <!-- Display shift information -->
         @if (Model != null)
         {
-            <p><strong>You have an ongoing shift. <br/>Clocked In At:</strong> @Model.ClockInTime<br/></p>
-            <form action="@Url.Action("ClockOut", "Home")" method="post">
-                <button type="submit" class="btn btn-secondary">Clock Out</button>
-            </form>
+        <p><strong>@ViewBag.Message</strong></p>
+
+        <!-- Show Clock Out button if allowed -->
+        if (ViewBag.CanClockOut != null && ViewBag.CanClockOut == true)
+        {
+        <form action="@Url.Action("ClockOut", "Home")" method="post">
+            <button type="submit" class="btn btn-secondary">Clock Out</button>
+        </form>
+        }
+
+        <!-- Show Clock In button if allowed -->
+        if (ViewBag.CanClockIn != null && ViewBag.CanClockIn == true)
+        {
+        <form action="@Url.Action("ClockIn", "Home")" method="post">
+            <button type="submit" class="btn btn-primary">Clock In</button>
+        </form>
+        }
         }
         else
         {
-            <form action="@Url.Action("ClockIn", "Home")" method="post">
-                <button type="submit" class="btn btn-primary">Clock In</button>
-            </form>
+        <p><strong>@ViewBag.Message</strong></p>
         }
     </section>
 </main>

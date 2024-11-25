@@ -6,7 +6,12 @@
 
 <h2>Manage Shifts</h2>
 
-<table class="table">
+<div>
+    <button class="btn btn-primary" onclick="location.href='@Url.Action("Create", "Shift")'">Schedule New Shift</button>
+</div>
+
+
+<table class="table" style="margin-top: 30px;">
     <thead>
     <tr>
         <th>Shift ID</th>
@@ -15,6 +20,7 @@
         <th>Clock In</th>
         <th>Clock Out</th>
         <th>Hours Worked</th>
+        <th>Status</th>
     </tr>
     </thead>
     <tbody>
@@ -27,6 +33,7 @@
             <td>@shift.ClockInTime.ToString("HH:mm:ss")</td>
             <td>@shift.ClockOutTime.ToString("HH:mm:ss")</td>
             <td>@shift.HoursWorked</td>
+            <td>@shift.Status</td>
         </tr>
     }
     </tbody>

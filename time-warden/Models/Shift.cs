@@ -23,6 +23,8 @@ namespace time_warden.Models
         public bool IsWorked { get; set; }
 
         public DateTime ShiftDate {  get; set; }
+        
+        public String Status { get; set; }
 
         //Navigational Properties - These are properties which are related to other classes and the basis of their relationships
         public string UserId { get; set; }
@@ -56,8 +58,9 @@ namespace time_warden.Models
         public Shift ClockOut(Shift shift)
         {
             shift.ClockOutTime = DateTime.Now;
+            shift.Status = "Complete";
 
-            // Convert TimeSpan to decimal hours
+            //Convert TimeSpan to decimal hours
             shift.HoursWorked = (decimal)(shift.ClockOutTime - shift.ClockInTime).TotalHours;
 
             DbWriter.EndShift(shift);

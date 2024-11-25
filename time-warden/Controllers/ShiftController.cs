@@ -69,18 +69,32 @@ namespace time_warden.Controllers
         // GET: Shift/Create
         public ActionResult Create()
         {
-            return View();
+            //Load employees list for the dropdown in the view
+            var dbReader = new DBReader();
+            var employees = dbReader.GetEmployees();
+
+            //Pass employees to the view
+            return View(employees);
         }
 
         // POST: Shift/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Create(string employeeId, DateTime shiftDate, DateTime clockInTime, DateTime clockOutTime)
         {
             try
             {
-                // TODO: Add insert logic here
+                //Insert the new shift into the database
+                var dbWriter = new DBWriter();
+                dbWriter.AddShift(new Shift
+                {
+                    UserId = employeeId,
+                    ShiftDate = shiftDate,
+                    ClockInTime = clockInTime,
+                    ClockOutTime = clockOutTime,
+                    Status = "Scheduled"
+                });
 
-                return RedirectToAction("Index");
+                return RedirectToAction("ManageShifts"); //Redirect to manage shifts list
             }
             catch
             {

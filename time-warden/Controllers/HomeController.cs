@@ -22,40 +22,64 @@ namespace time_warden.Controllers
             }
 
             DBReader dbReader = new DBReader();
-            var currentShift =
-                dbReader.GetCurrentShift(loggedInUser
-                    .UserId); //Get current shift using method in DBReader with userid passed in
+            var todaysShift = dbReader.GetTodaysShift(loggedInUser.UserId); //Get todays shift using method in DBReader with userid passed in
+            
+            if (todaysShift == null)
+            {
+                //No shift found for today, pass a flag or null to the view
+                ViewBag.Message = "You do not have a shift scheduled for today. If you believe you are supposed to be working, ask a manager to schedule you a shift.";
+                ViewBag.CanClockIn = false;
+                ViewBag.CanClockOut = false;
+                return View(); //Return view without a shift
+            }
 
-            return View(currentShift);
+            //Determine if the shift is scheduled, active, or completed
+            if (todaysShift.Status == "Scheduled")
+            {
+                ViewBag.Message = $"You are scheduled to clock in for a shift today at {todaysShift.ClockInTime:HH:mm}.";
+                ViewBag.CanClockIn = true;
+                ViewBag.CanClockOut = false;
+            }
+            else if (todaysShift.Status == "Active")
+            {
+                ViewBag.Message = $"You are currently clocked in. You are due to clock out at {todaysShift.ClockOutTime:HH:mm}.";
+                ViewBag.CanClockIn = false;
+                ViewBag.CanClockOut = true;
+            }
+            else if (todaysShift.Status == "Complete")
+            {
+                ViewBag.Message = $"You finished your shift today. Total hours worked: {todaysShift.HoursWorked} hours.";
+                ViewBag.CanClockIn = false;
+                ViewBag.CanClockOut = false;
+            }
+            
+            return View(todaysShift);
         }
 
         //Clock In action
         [HttpPost]
-        public ActionResult ClockIn()
-        {
-            //Get the logged in user from the session
-            var loggedInUser = (User)Session["LoggedInUser"];
-
-            DBReader dbReader = new DBReader();
-            var currentShift =
-                dbReader.GetCurrentShift(loggedInUser.UserId); //Check to see if there is a current shift active
-
-            if (currentShift != null &&
-                currentShift.ClockOutTime == DateTime.MinValue) //If user has ongoing shift, can't click clockin
-            {
-                TempData["ErrorMessage"] = $"You already have an ongoing shift started at {currentShift.ClockInTime}";
-                return RedirectToAction("Index");
-            }
-
-            //Create a new shift and clock in
-            Shift shift = new Shift();
-            shift = shift.ClockIn(loggedInUser); //Call the ClockIn method form shift
-
-            TempData["SuccessMessage"] = $"Clocked in successfully at {shift.ClockInTime:HH:mm:ss}!";
-
-            //Redirect to the Index page 
-            return RedirectToAction("Index");
-        }
+         public ActionResult ClockIn()
+         {
+             //Get the logged in user from the session
+             var loggedInUser = (User)Session["LoggedInUser"];
+        
+             DBReader dbReader = new DBReader();
+             var todaysShift = dbReader.GetTodaysShift(loggedInUser.UserId); //Check to see if there is a shift today
+        
+             if (todaysShift == null || todaysShift.Status != "Scheduled") //If user has no shift today, or status isn't scheduled, then can't clock in
+             {
+                 return RedirectToAction("Index");
+             }
+        
+             //Clock in
+             DBWriter dbWriter = new DBWriter();
+             todaysShift.ClockInTime = DateTime.Now;
+             todaysShift.Status = "Active";
+             dbWriter.StartShift(todaysShift);
+        
+             TempData["SuccessMessage"] = $"Clocked in successfully at {todaysShift.ClockInTime:HH:mm:ss}!";
+             return RedirectToAction("Index");
+         }
 
         //Clock Out action
         [HttpPost]
@@ -63,22 +87,21 @@ namespace time_warden.Controllers
         {
             DBReader dbReader = new DBReader();
             var loggedInUser = (User)Session["LoggedInUser"];
-
+        
             //Get the current shift
-            var currentShift = dbReader.GetCurrentShift(loggedInUser.UserId);
-            if (currentShift == null) //|| currentShift.ClockInTime == DateTime.MinValue 
+            var activeShift = dbReader.GetActiveShift(loggedInUser.UserId);
+            if (activeShift == null) 
             {
                 TempData["ErrorMessage"] = "No ongoing shift to clock out of.";
                 return RedirectToAction("Index");
             }
-
-            Console.WriteLine($"Current Shift ID: {currentShift.ShiftId}, ClockInTime: {currentShift.ClockInTime}");
-
+        
+            Console.WriteLine($"Current Shift ID: {activeShift.ShiftId}, ClockInTime: {activeShift.ClockInTime}");
+        
             //Clock out the shift
-            currentShift = currentShift.ClockOut(currentShift); //Call the ClockOut method
-            TempData["SuccessMessage"] =
-                $"Clocked out successfully. Your shift started at {currentShift.ClockInTime:HH:mm:ss} and ended at {DateTime.Now:HH:mm:ss}.";
-
+            activeShift = activeShift.ClockOut(activeShift); //Call the ClockOut method
+            TempData["SuccessMessage"] = $"Clocked out successfully. Your shift started at {activeShift.ClockInTime:HH:mm:ss} and ended at {DateTime.Now:HH:mm:ss}.";
+        
             //Redirect to the Index page
             return RedirectToAction("Index");
         }

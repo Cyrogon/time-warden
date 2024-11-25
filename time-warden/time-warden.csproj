@@ -290,6 +290,7 @@
     <Content Include="Views\Shift\ManageShifts.cshtml" />
     <Content Include="Views\Shift\Index.cshtml" />
     <Content Include="Views\Shift\ManageShifts.cshtml" />
+    <Content Include="Views\Shift\Create.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -327,7 +328,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Shift\" />
     <Folder Include="Views\Payslip\" />
     <Folder Include="Views\Shift\" />
   </ItemGroup>
