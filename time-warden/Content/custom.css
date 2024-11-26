@@ -1,0 +1,67 @@
+html, body{
+    height:100%;
+    margin:0;
+    padding:0;
+}
+
+.twbg{
+    background-image: url("img/time-warden-bg.png");
+    background-position:center;
+    background-size:1080px 1080px;
+    height:100%;
+}
+.loginForm{
+    padding-left: 3em;
+    padding-right: 3em;
+    padding-bottom: 5em;
+    padding-top:2em;
+    border-radius: 10%;
+    margin: 6em;
+    border-style: solid;
+    width:32em;
+    height: 35em;
+
+}
+.loginico{
+    position:absolute;
+    margin-top:0.7em;
+    margin-left:0.7em;
+    color: #AAAAAA;
+}
+h1{
+    color: #00003d;
+    font-size: 3.7em;
+    font-weight: bold;
+}
+h5{
+    color: #0085fe;
+    font-size: 0.9em;
+}
+#EmailLogin, #PasswordLogin{
+    padding-left:2em;
+    width:23em;
+    margin-top:2em;
+}
+.submit-wrapper{
+    padding-top:5em;
+}
+.loginbtn{
+    width:15em;
+    display:flex;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 10%;
+    background-color:#2401b3;
+    border-color:#2401b3;
+}
+.backbtn{
+    font-size: 3em;
+    position:absolute;
+    left:2em;
+    top:2em;
+}
+.cstm-check{
+    padding-top:2em;
+}
