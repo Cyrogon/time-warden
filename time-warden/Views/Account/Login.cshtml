@@ -2,6 +2,7 @@
 @model LoginViewModel
 @{
     ViewBag.Title = "Log in";
+    Layout = null;
 }
 <!DOCTYPE html>
 <html>
@@ -10,7 +11,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - My ASP.NET Application</title>
     @Styles.Render("~/Content/css")
-    @Styles.Render("~/fontawesome-free-6.7.1-web/css/all.min.css")
+    @Styles.Render("~/Content/fontawesome-free-6.7.1-web/css/all.min.css")
+    @Styles.Render("~/Content/custom.css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
 
@@ -39,11 +41,11 @@
                         @Html.PasswordFor(m => m.Password, new { @class = "form-control", @id = "PasswordLogin" })
                         @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
                     </div>
-                    <div class="form-check">
+                    <div class="form-check cstm-check">
                         @Html.CheckBoxFor(m => m.RememberMe)
                         @Html.LabelFor(m => m.RememberMe)
                     </div>
-                    <div class="offset-md-2 col-md-10">
+                    <div class="submit-wrapper">
                         <input type="submit" value="Log in" class="btn btn-primary loginbtn"/>
                     </div>
                 }
@@ -55,7 +57,7 @@
 
             <div style="height:10em"></div>
             <div class="col-1"></div>
-            <div class="col-5 align-self-center"><img src="img/desktop.gif"/></div>
+            <div class="col-5 align-self-center"><img src="/Content/img/desktop.gif"/></div>
         </div>
     </div>
 </div>
@@ -65,31 +67,31 @@
 <div class="row">
     <div class="col-md-8">
         <section id="loginForm">
-            @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
+            using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
             {
-                @Html.AntiForgeryToken()
+                Html.AntiForgeryToken()
                 <h4>Use a local account to log in.</h4>
                 <hr/>
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                Html.ValidationSummary(true, "", new { class = "text-danger" })
                 <div class="row">
-                    @Html.LabelFor(m => m.Username, new { @class = "col-md-2 col-form-label" })
+                    Html.LabelFor(m => m.Username, new { class = "col-md-2 col-form-label" })
                     <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.Username, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" })
+                        Html.TextBoxFor(m => m.Username, new { class = "form-control" })
+                        Html.ValidationMessageFor(m => m.Username, "", new { class = "text-danger" })
                     </div>
                 </div>
                 <div class="row">
-                    @Html.LabelFor(m => m.Password, new { @class = "col-md-2 col-form-label" })
+                    Html.LabelFor(m => m.Password, new { class = "col-md-2 col-form-label" })
                     <div class="col-md-10">
-                        @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                        Html.PasswordFor(m => m.Password, new { class = "form-control" })
+                        Html.ValidationMessageFor(m => m.Password, "", new { class = "text-danger" })
                     </div>
                 </div>
                 <div class="row">
                     <div class="offset-md-2 col-md-10">
                         <div class="checkbox">
-                            @Html.CheckBoxFor(m => m.RememberMe)
-                            @Html.LabelFor(m => m.RememberMe)
+                            Html.CheckBoxFor(m => m.RememberMe)
+                            Html.LabelFor(m => m.RememberMe)
                         </div>
                     </div>
                 </div>
@@ -99,18 +101,18 @@
                     </div>
                 </div>
                 <p>
-                    @Html.ActionLink("Register as a new user", "Register")
+                    Html.ActionLink("Register as a new user", "Register")
                 </p>
-                @* Enable this once you have account confirmation enabled for password reset functionality
+                * Enable this once you have account confirmation enabled for password reset functionality
                         <p>
-                            @Html.ActionLink("Forgot your password?", "ForgotPassword")
-                        </p>*@
+                            Html.ActionLink("Forgot your password?", "ForgotPassword")
+                        </p>*
             }
         </section>
     </div>
     <div class="col-md-4">
         <section id="socialLoginForm">
-            @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+            Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
         </section>
     </div>
 </div>-->
@@ -118,9 +120,5 @@
 
 @Scripts.Render("~/bundles/jquery")
 @Scripts.Render("~/bundles/bootstrap")
-@RenderSection("scripts", required: false)
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
 </body>
 </html>
